@@ -6,7 +6,7 @@ import com.netflix.graphql.dgs.DgsQuery
 import com.netflix.graphql.dgs.InputArgument
 
 @DgsComponent
-class ShowDataFetcher {
+class ShowsDataFetcher {
     private val shows = listOf(
         Show(title = "Stranger Things", releaseYear = 2016),
         Show("Ozark", 2017),
