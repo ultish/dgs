@@ -3,7 +3,14 @@ type Query {
 }
 
 type Show {
+    id: ID!
     title: String!
     releaseYear: Int!
+    director: Director
 }
 
+type Director {
+    id: ID!
+    name: String!
+    shows: [Show!]
+}
