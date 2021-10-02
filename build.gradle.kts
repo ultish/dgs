@@ -24,15 +24,18 @@ dependencies {
     implementation("com.netflix.graphql.dgs:graphql-dgs-spring-boot-starter")
 
     implementation("org.springframework.boot:spring-boot-starter-data-mongodb")
-    implementation("com.querydsl:querydsl-mongodb")
-    implementation("com.querydsl:querydsl-apt")
+    implementation("com.querydsl:querydsl-mongodb:5.0.0")
+    implementation("com.querydsl:querydsl-apt:5.0.0")
 
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
     implementation("org.jetbrains.kotlin:kotlin-reflect")
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
 
-    kapt("com.querydsl:querydsl-apt:4.4.0:general")
+    // TODO bug when using kotlin generation with spring-data, reflectionUtil
+    //  on static final attribute issue.
+//    kapt("com.querydsl:querydsl-kotlin-codegen:5.0.0")
+    kapt("com.querydsl:querydsl-apt:5.0.0:general")
 
     testImplementation("org.springframework.boot:spring-boot-starter-test")
 }
