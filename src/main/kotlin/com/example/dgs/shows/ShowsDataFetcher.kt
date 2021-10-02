@@ -1,10 +1,12 @@
 package com.example.dgs.shows
 
+import com.example.dgs.entities.QShow
 import com.example.dgs.entities.toTO
 import com.example.dgs.generated.types.Show
 import com.netflix.graphql.dgs.DgsComponent
 import com.netflix.graphql.dgs.DgsQuery
 import com.netflix.graphql.dgs.InputArgument
+import com.querydsl.core.BooleanBuilder
 import org.springframework.beans.factory.annotation.Autowired
 
 @DgsComponent
@@ -18,23 +20,23 @@ class ShowsDataFetcher {
 
     @DgsQuery
     fun shows(
-        @InputArgument titleFilter: String?,
-        @InputArgument releaseYearFilter: Int?
+        @InputArgument title: String?, // arg name must match schema file
+        @InputArgument releaseYear: Int?
     ): List<Show> {
-        println("Fetching Shows... $titleFilter")
+        println("Fetching Shows... $title, $releaseYear")
 
-        return if (titleFilter != null) {
-            showRepository.findByTitleAndReleaseYear(
-                titleFilter,
-                releaseYearFilter
-            ).map { it.toTO() }
+        val builder = BooleanBuilder()
 
-//            val p: Predicat
-//            showRepository.findAll(com.querydsl.core.types.Predicate())
-
-        } else {
-            showsService.shows()
+        title?.also {
+            builder.and(QShow.show.title.equalsIgnoreCase(it))
+        }.let {
+            println("title filter: $it")
         }
-    }
 
+        releaseYear?.let {
+            builder.and(QShow.show.releaseYear.gt(it))
+        }
+
+        return showRepository.findAll(builder).map { it.toTO() }
+    }
 }

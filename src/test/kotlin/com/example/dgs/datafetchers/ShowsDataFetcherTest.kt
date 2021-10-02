@@ -1,11 +1,11 @@
 package com.example.dgs.datafetchers
 
-import com.example.dgs.generated.types.Show
 import com.example.dgs.shows.ShowRepository
 import com.example.dgs.shows.ShowsDataFetcher
 import com.example.dgs.shows.ShowsService
 import com.netflix.graphql.dgs.DgsQueryExecutor
 import com.netflix.graphql.dgs.autoconfig.DgsAutoConfiguration
+import com.querydsl.core.BooleanBuilder
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -32,21 +32,34 @@ class ShowsDataFetcherTest {
 
     @BeforeEach
     fun before() {
-        Mockito.`when`(showsService.shows()).thenAnswer {
-            listOf(Show(id = "1", title = "mock title", releaseYear = 2020))
-        }
+//        Mockito.`when`(showsService.shows()).thenAnswer {
+//            listOf(Show(id = "1", title = "mock title", releaseYear = 2020))
+//        }
+//        Mockito.`when`(
+//            showRepository.findByTitleAndReleaseYear
+//                (ArgumentMatchers.anyString(), ArgumentMatchers.anyInt())
+//        )
+//            .thenAnswer {
+//                listOf(
+//                    Show(
+//                        id = "1", title = "mock title", releaseYear =
+//                        2020
+//                    )
+//                )
+//            }
+
         Mockito.`when`(
-            showRepository.findByTitleAndReleaseYear
-                (ArgumentMatchers.anyString(), ArgumentMatchers.anyInt())
-        )
-            .thenAnswer {
-                listOf(
-                    Show(
-                        id = "1", title = "mock title", releaseYear =
-                        2020
-                    )
+            showRepository.findAll(
+                ArgumentMatchers.any(BooleanBuilder::class.java)
+            )
+        ).thenAnswer {
+            listOf(
+                com.example.dgs.entities.Show(
+                    id = "1", title = "mock title", releaseYear =
+                    2020
                 )
-            }
+            )
+        }
     }
 
     @Test
@@ -64,13 +77,16 @@ class ShowsDataFetcherTest {
         assertThat(titles).contains("mock title")
     }
 
+    // TODO use argumentcaptor instead, also look
+    //  into https://github.com/mockito/mockito-kotlin
+
 //    @Test
 //    fun showsWithQueryApi() {
 //
 //        val graphQLQueryRequest = GraphQLQueryRequest(
 //            ShowsGraphQLQuery
 //                .Builder()
-//                .titleFilter("mock")
+//                .title("mock")
 //                .build(), ShowsProjectionRoot().title()
 //        )
 //
@@ -83,7 +99,13 @@ class ShowsDataFetcherTest {
 
     @Test
     fun showsWithException() {
-        Mockito.`when`(showsService.shows()).thenThrow(
+        Mockito.`when`(
+            showRepository.findAll(
+                ArgumentMatchers.any(
+                    BooleanBuilder::class.java
+                )
+            )
+        ).thenThrow(
             RuntimeException
                 ("nothing to see here")
         )
